@@ -117,7 +117,47 @@ const place = (board, { x, y, type }) => {
     }
   }
   // 右上方向
+  if (y > x) {
+    for (let i = y-1; i >= 0; i--) {
+      if (next[i][x+(y-i)] === placed) {
+        for (let k = i+1; k < y; k++) {
+          next[k][x+(y-k)] = placed;
+        }
+        break;
+      }
+    }
+  } else {
+    for (let i = x+1; i < 8; i++) {
+      if (next[y-(i-x)][i] === placed) {
+        for (let k = i-1; k > x; k--) {
+          next[y-(k-x)][k] = placed;
+        }
+        break;
+      }
+    }
+  }
   // 左上方向
+  if (y <= x) {
+    const sa = Math.abs(x-y);
+    for (let i = y-1; i >= 0; i--) {
+      if (next[i][i+sa] === placed) {
+        for (let k = i+1; k < y; k++) {
+          next[k][k+sa] = placed;
+        }
+        break;
+      }
+    }
+  } else {
+    const sa = Math.abs(x-y);
+    for (let i = x-1; i >= 0; i--) {
+      if (next[i+sa][i] === placed) {
+        for (let k = i+1; k < x; k++) {
+          next[k+sa][k] = placed;
+        }
+        break;
+      }
+    }
+  }
   // 左下方向
   return next;
 };
