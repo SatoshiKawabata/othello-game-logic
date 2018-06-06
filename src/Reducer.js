@@ -56,9 +56,13 @@ const canPlace = (board, { x, y, type }) => {
 const place = (board, { x, y, type }) => {
   const next = JSON.parse(JSON.stringify(board));
   const placed = next[y][x] = type === "white" ? 1 : -1;
+
   // 裏返すロジック
-  // 左方向
+  // left direction
   for (let i = x-1; i >= 0; i--) {
+    if (next[y][i] === 0) {
+      break;
+    }
     if (next[y][i] === placed) {
       for (let k = i+1; k < x; k++) {
         next[y][k] = placed;
@@ -66,8 +70,11 @@ const place = (board, { x, y, type }) => {
       break;
     }
   }
-  // 右方向
+  // right direction
   for (let i = x+1; i < 8; i++) {
+    if (next[y][i] === 0) {
+      break;
+    }
     if (next[y][i] === placed) {
       for (let k = i-1; k > x; k--) {
         next[y][k] = placed;
@@ -75,8 +82,11 @@ const place = (board, { x, y, type }) => {
       break;
     }
   }
-  // 上方向
+  // top direction
   for (let i = y-1; i >= 0; i--) {
+    if (next[i][x] === 0) {
+      break;
+    }
     if (next[i][x] === placed) {
       for (let k = i+1; k < y; k++) {
         next[k][x] = placed;
@@ -84,8 +94,11 @@ const place = (board, { x, y, type }) => {
       break;
     }
   }
-  // 下方向
+  // bottom direction
   for (let i = y+1; i < 8; i++) {
+    if (next[i][x] === 0) {
+      break;
+    }
     if (next[i][x] === placed) {
       for (let k = i-1; k > y; k--) {
         next[k][x] = placed;
@@ -94,10 +107,13 @@ const place = (board, { x, y, type }) => {
     }
   }
 
-  // 右下方向
+  // right bottom direction
   if (x <= y) {
     const sa = y-x;
     for (let i = y+1; i < 8; i++) {
+      if (next[i][i-sa] === 0) {
+        break;
+      }
       if (next[i][i-sa] === placed) {
         for (let k = i-1; k > y; k--) {
           next[k][k-sa] = placed;
@@ -108,6 +124,9 @@ const place = (board, { x, y, type }) => {
   } else {
     const sa = x-y;
     for (let i = x+1; i < 8; i++) {
+      if (next[i-sa][i] === 0) {
+        break;
+      }
       if (next[i-sa][i] === placed) {
         for (let k = i-1; k > x; k--) {
           next[k-sa][k] = placed;
@@ -116,9 +135,12 @@ const place = (board, { x, y, type }) => {
       }
     }
   }
-  // 右上方向
-  if (y > x) {
+  // right top direction
+  if (y < 7-x) {
     for (let i = y-1; i >= 0; i--) {
+      if (next[i][x+(y-i)] === 0) {
+        break;
+      }
       if (next[i][x+(y-i)] === placed) {
         for (let k = i+1; k < y; k++) {
           next[k][x+(y-k)] = placed;
@@ -128,6 +150,9 @@ const place = (board, { x, y, type }) => {
     }
   } else {
     for (let i = x+1; i < 8; i++) {
+      if (next[y-(i-x)][i] === 0) {
+        break;
+      }
       if (next[y-(i-x)][i] === placed) {
         for (let k = i-1; k > x; k--) {
           next[y-(k-x)][k] = placed;
@@ -136,29 +161,58 @@ const place = (board, { x, y, type }) => {
       }
     }
   }
-  // 左上方向
-  if (y <= x) {
-    const sa = Math.abs(x-y);
+  // left top direction
+  if (y < x) {
     for (let i = y-1; i >= 0; i--) {
-      if (next[i][i+sa] === placed) {
+      if (next[i][x-(y-i)] === 0) {
+        break;
+      }
+      if (next[i][x-(y-i)] === placed) {
         for (let k = i+1; k < y; k++) {
-          next[k][k+sa] = placed;
+          next[k][x-(y-k)] = placed;
         }
         break;
       }
     }
   } else {
-    const sa = Math.abs(x-y);
     for (let i = x-1; i >= 0; i--) {
-      if (next[i+sa][i] === placed) {
+      if (next[y-(x-i)][i] === 0) {
+        break;
+      }
+      if (next[y-(x-i)][i] === placed) {
         for (let k = i+1; k < x; k++) {
-          next[k+sa][k] = placed;
+          next[y-(x-k)][k] = placed;
         }
         break;
       }
     }
   }
-  // 左下方向
+  // left bottom direction
+  if (x < 7-y) {
+    for (let i = x-1; i >= 0; i--) {
+      if (next[y+(x-i)][i] === 0) {
+        break;
+      }
+      if (next[y+(x-i)][i] === placed) {
+        for (let k = i+1; k < x; k++) {
+          next[y+(x-k)][k] = placed;
+        }
+        break;
+      }
+    }
+  } else {
+    for (let i = y+1; i < 8; i++) {
+      if (next[i][x-(i-y)] === 0) {
+        break;
+      }
+      if (next[i][x-(i-y)] === placed) {
+        for (let k = i-1; k > y; k--) {
+          next[k][x-(k-y)] = placed;
+        }
+        break;
+      }
+    }
+  }
   return next;
 };
 
