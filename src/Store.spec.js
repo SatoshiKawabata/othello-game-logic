@@ -3,11 +3,6 @@ const {Reducer} = require("./Reducer");
 const ActionCreator = require("./ActionCreator");
 
 const store = createStore(Reducer);
-console.log(store);
-store.subscribe(state => {
-  console.log(state);
-});
-
 
 describe("a", () => {
   it("start game", () => {

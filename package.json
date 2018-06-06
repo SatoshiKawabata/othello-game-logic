@@ -1,10 +1,17 @@
 {
-  "name": "nu-othello",
-  "version": "1.0.0",
+  "name": "othello-game-logic",
+  "version": "0.0.5",
   "main": "index.js",
+  "author": "SatoshiKawabata <kwst.andromeda.ma@gmail.com> (http://qiita.com/kwst)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SatoshiKawabata/othello-game-logic"
+  },
   "scripts": {
-    "test": "jest --watchAll ./src/**/*.spec.js"
+    "test": "jest ./src/",
+    "test-watch": "jest --watchAll ./src/",
+    "publish": "npm publish ./"
   },
   "devDependencies": {
     "jest": "^23.1.0"
