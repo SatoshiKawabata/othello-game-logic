@@ -42,7 +42,7 @@ const Reducer = (state = initialState, action) => {
       if (!canPlace(state.board, action.stone)) {
         // 置けなければその色の負け
         return Object.assign({}, state, {
-          gameState: `win-${action.stone.type === STATE_BLACK ? STATE_WHITE : STATE_BLACK}`
+          gameState: action.stone.type === STATE_BLACK ? STATE_WIN_WHITE : STATE_WIN_BLACK
         });
       }
 
