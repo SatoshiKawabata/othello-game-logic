@@ -27,19 +27,22 @@ const initialBoardState = [
 
 const initialState = {
   gameState: STATE_INIT, // "init", "white", "black", "win-white", "win-black", "draw"
-  board: initialBoardState
+  board: initialBoardState,
+  placeableCells: []
 };
 
 /**
  *
- * @param {{gameState: string, board: number[][]}} state
+ * @param {{gameState: string, board: number[][], placeableCells: {x: number, y: number}[]}} state
  * @param {{type: string, stone?: {x: number, y: number, type: "white" | "black"}}} action
+ * @returns {{gameState: string, board: number[][], placeableCells: {x: number, y: number}[]}}
  */
 const Reducer = (state = initialState, action) => {
   switch (action.type) {
     case "START_GAME" :
       return Object.assign({}, state, {
-        gameState: STATE_BLACK
+        gameState: STATE_BLACK,
+        placeableCells: getPlacableCells(state.board, STONE_BLACK)
       });
 
     case "PUT_STONE":
@@ -47,7 +50,8 @@ const Reducer = (state = initialState, action) => {
       if (!canPlace(state.board, action.stone)) {
         // 置けなければその色の負け
         return Object.assign({}, state, {
-          gameState: action.stone.type === STATE_BLACK ? STATE_WIN_WHITE : STATE_WIN_BLACK
+          gameState: action.stone.type === STATE_BLACK ? STATE_WIN_WHITE : STATE_WIN_BLACK,
+          placeableCells: []
         });
       }
 
@@ -58,13 +62,43 @@ const Reducer = (state = initialState, action) => {
       const nextGameState = getNextGameState(nextBoard, state.gameState);
       return Object.assign({}, state, {
         gameState: nextGameState,
-        board: nextBoard
+        board: nextBoard,
+        placeableCells: isGame(nextGameState)
+          ? getPlacableCells(nextBoard, getStone(nextGameState))
+          : []
       });
   }
 };
 
 /**
+ * ゲーム続行中かどうか
+ * @param {string} gameState
+ * @returns {boolean}
+ */
+const isGame = gameState => {
+  return gameState === STATE_WHITE || gameState === STATE_BLACK;
+};
+
+/**
+ *
+ * @param {string} gameState
+ * @return {string} stone type
+ */
+const getStone = gameState => {
+  if (gameState === STATE_BLACK) {
+    return STONE_BLACK;
+  } else if (gameState === STATE_WHITE) {
+    return STONE_WHITE;
+  } else {
+    return null;
+  }
+};
+
+/**
  * 石を置いて、裏返す
+ * @param {number[][]} board
+ * @param {{x: number, y: number, type: "white" | "black"}} param1
+ * @return {number[][]}
  */
 const place = (board, { x, y, type }) => {
   const next = JSON.parse(JSON.stringify(board));
@@ -233,6 +267,7 @@ const place = (board, { x, y, type }) => {
  * 石を置くことができる座標の配列を取得する
  * @param {number[][]} board
  * @param {string} type
+ * @returns {{x: number, y: number}[]}
  */
 const getPlacableCells = (board, type) => {
   const placeableCells = [];
@@ -251,6 +286,7 @@ const getPlacableCells = (board, type) => {
  * 置けるかどうか
  * @param {number[][]} board
  * @param {{x: number, y: number, type: string}} param1
+ * @returns {boolean}
  */
 const canPlace = (board, { x, y, type }) => {
   if (board[y][x] !== E) {
@@ -262,8 +298,9 @@ const canPlace = (board, { x, y, type }) => {
 
 /**
  * 2つのボードの差分を取る
-* @param {number[][]} boardA
+ * @param {number[][]} boardA
  * @param {number[][]} boardB
+ * @returns {{x: number, y: number}[]}
  */
 const getDiffCells = (boardA, boardB) => {
   const diff = [];
@@ -279,7 +316,10 @@ const getDiffCells = (boardA, boardB) => {
 
 
 /**
- * 勝利判定
+ *
+ * @param {number[][]} board
+ * @param {string} currentGameState
+ * @returns {string}
  */
 const getNextGameState = (board, currentGameState) => {
   let next;
@@ -309,6 +349,11 @@ const getNextGameState = (board, currentGameState) => {
   return currentGameState;
 };
 
+/**
+ *
+ * @param {number[][]} board
+ * @returns {{whiteNum: string, blackNum: string}}
+ */
 const getStoneNum = board => {
   let whiteNum = 0;
   let blackNum = 0;
@@ -328,6 +373,7 @@ const getStoneNum = board => {
 /**
  * ボードが満タンかどうか
  * @param {*} board
+ * @return {boolean}
  */
 const isBoardFull = board => {
   const hasEmpty = board.some(row => row.some(val => val === E));

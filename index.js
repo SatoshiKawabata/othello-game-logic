@@ -1,11 +1,8 @@
-const createStore = require("./src/Store");
+const {Store} = require("./src/Store");
 const {Reducer} = require("./src/Reducer");
-const ActionCreator = require("./src/ActionCreator");
-
-const store = createStore(Reducer);
+const {ActionCreator} = require("./src/ActionCreator");
 
 module.exports = {
-  createStore,
-  Reducer,
+  createStore: () => new Store(Reducer),
   ActionCreator
 };
