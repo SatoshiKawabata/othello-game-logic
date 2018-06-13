@@ -30,6 +30,11 @@ const initialState = {
   board: initialBoardState
 };
 
+/**
+ *
+ * @param {{gameState: string, board: number[][]}} state
+ * @param {{type: string, stone?: {x: number, y: number, type: "white" | "black"}}} action
+ */
 const Reducer = (state = initialState, action) => {
   switch (action.type) {
     case "START_GAME" :
@@ -56,14 +61,6 @@ const Reducer = (state = initialState, action) => {
         board: nextBoard
       });
   }
-};
-
-/**
- * 置けるかどうか
- */
-const canPlace = (board, { x, y, type }) => {
-  // 置けるかどうかロジック
-  return true;
 };
 
 /**
@@ -234,10 +231,51 @@ const place = (board, { x, y, type }) => {
 
 /**
  * 石を置くことができる座標の配列を取得する
+ * @param {number[][]} board
+ * @param {string} type
  */
 const getPlacableCells = (board, type) => {
-  return [0, 0];
+  const placeableCells = [];
+  board.forEach((rows, y) => {
+    rows.forEach((val, x) => {
+      if (canPlace(board, { x, y, type })) {
+        placeableCells.push({x, y});
+      }
+    });
+  });
+  return placeableCells;
 };
+
+
+/**
+ * 置けるかどうか
+ * @param {number[][]} board
+ * @param {{x: number, y: number, type: string}} param1
+ */
+const canPlace = (board, { x, y, type }) => {
+  if (board[y][x] !== E) {
+    return false;
+  }
+  const diff = getDiffCells(board, place(board, { x, y, type }));
+  return diff.length > 1;
+};
+
+/**
+ * 2つのボードの差分を取る
+* @param {number[][]} boardA
+ * @param {number[][]} boardB
+ */
+const getDiffCells = (boardA, boardB) => {
+  const diff = [];
+  boardA.forEach((rows, y) => {
+    rows.forEach((val, x) => {
+      if (val !== boardB[y][x]) {
+        diff.push({x, y});
+      }
+    });
+  });
+  return diff;
+}
 
 
 /**
@@ -303,5 +341,6 @@ module.exports = {
   getPlacableCells,
   getNextGameState,
   isBoardFull,
-  getStoneNum
+  getStoneNum,
+  getDiffCells
 };

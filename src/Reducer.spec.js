@@ -5,10 +5,39 @@ const {
   getPlacableCells,
   getNextGameState,
   isBoardFull,
-  getStoneNum
+  getStoneNum,
+  getDiffCells
 } = require("./Reducer");
+const ActionCreator = require("./ActionCreator");
 
 describe("Reducer", () => {
+  it("white should win", () => {
+    const next = Reducer({
+      gameState: "black",
+      board: [
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, -1, 1, 1, 1 ],
+        [ 1, 1, 1, -1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 0, 1, 1, 1, 1 ]
+      ]
+    }, ActionCreator.putStone(3, 7, "black"));
+    expect(next.gameState).toBe("win-white");
+    expect(next.board).toEqual([
+      [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+      [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+      [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+      [ 1, 1, 1, 1, -1, 1, 1, 1 ],
+      [ 1, 1, 1, -1, 1, 1, 1, 1 ],
+      [ 1, 1, 1, -1, 1, 1, 1, 1 ],
+      [ 1, 1, 1, -1, 1, 1, 1, 1 ],
+      [ 1, 1, 1, -1, 1, 1, 1, 1 ]
+    ]);
+  });
+
   it("canPlace", () => {
     let board = [
       [ 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -20,7 +49,9 @@ describe("Reducer", () => {
       [ 0, 0, 0, 0, 0, 0, 0, 0 ],
       [ 0, 0, 0, 0, 0, 0, 0, 0 ]
     ];
-    expect(canPlace(board, {x: 0, y:0, type: "white"})).toBe(true);
+    expect(canPlace(board, {x: 0, y: 0, type: "white"})).toBe(false);
+    expect(canPlace(board, {x: 4, y: 3, type: "white"})).toBe(false);
+    expect(canPlace(board, {x: 4, y: 2, type: "white"})).toBe(true);
   });
 
   describe("place", () => {
@@ -364,5 +395,70 @@ describe("Reducer", () => {
       whiteNum: 2,
       blackNum: 2
     })
-  })
+  });
+
+  describe("compareBoards", () => {
+    expect(getDiffCells([
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 1, 1, 0, 0, 0 ],
+      [ 0, 0, 0, -1, 1, 0, 0, 0 ],
+      [ 0, 0, 0, -1, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ]
+    ], [
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 1, 0, 0, 0 ],
+      [ 0, 0, 0, 1, -1, 0, 0, 0 ],
+      [ 0, 0, 0, -1, 1, 0, 0, 0 ],
+      [ 0, 0, 0, 1, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ]
+    ])).toEqual([
+      {x: 4, y: 2},
+      {x: 4, y: 3},
+      {x: 3, y: 5}
+    ]);
+  });
+
+  describe("getPlacableCells", () => {
+    expect(getPlacableCells([
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 1, -1, 0, 0, 0 ],
+      [ 0, 0, 0, -1, 1, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ]
+    ], "white")).toEqual([
+      {x: 4, y: 2},
+      {x: 5, y: 3},
+      {x: 2, y: 4},
+      {x: 3, y: 5}
+    ]);
+
+    expect(getPlacableCells([
+      [  0,  0, -1,  0,  0,  1,  0,  0 ],
+      [  0,  0,  1,  0,  1,  0,  0,  0 ],
+      [  0,  0,  1,  1,  1, -1,  0,  0 ],
+      [ -1,  1,  0,  1,  1,  0,  0,  0 ],
+      [  0,  1, -1,  1, -1,  1,  0,  0 ],
+      [ -1, -1,  1, -1,  1,  1, -1,  0 ],
+      [ -1,  1,  0,  0,  0,  1,  0,  0 ],
+      [  0,  0,  0,  0,  0,  0, -1,  0 ]
+    ], "white")).toEqual([
+      {y: 1, x: 6},
+      {y: 2, x: 6},
+      {y: 3, x: 2},
+      {y: 3, x: 6},
+      {y: 4, x: 7},
+      {y: 5, x: 7},
+      {y: 6, x: 3},
+      {y: 6, x: 4},
+      {y: 6, x: 7}
+    ]);
+  });
 });
