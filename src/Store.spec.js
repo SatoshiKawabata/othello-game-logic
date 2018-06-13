@@ -1,9 +1,9 @@
-const createStore = require("./Store");
+const {Store} = require("./Store");
 const {Reducer} = require("./Reducer");
-const ActionCreator = require("./ActionCreator");
+const {ActionCreator} = require("./ActionCreator");
 
 describe("Store test", () => {
-  const store = createStore(Reducer);
+  const store = new Store(Reducer);
   it("start game", () => {
     store.dispatch(ActionCreator.startGame());
     expect(store.getState().board).toEqual([

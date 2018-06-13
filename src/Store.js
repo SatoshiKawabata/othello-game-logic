@@ -6,11 +6,12 @@ class Store {
    */
   constructor(reducer) {
     this._reducer = reducer;
+    this._state = reducer();
   }
 
   /**
    *
-   * @param {Function} listener
+   * @param {() => {gameState: string, board: number[][], placeableCells: {x: number, y: number}[]}} listener
    */
   subscribe(listener) {
     this._listeners = this._listeners || [];

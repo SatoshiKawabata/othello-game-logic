@@ -19,11 +19,31 @@ const putStone = (x, y, type) => {
     type: "PUT_STONE",
     stone: { x, y, type }
   };
-}
+};
+
+/**
+ * @returns {{type: string}}
+ */
+const skip = () => {
+  return {
+    type: "SKIP"
+  };
+};
+
+/**
+ * @returns {{type: string}}
+ */
+const reset = () => {
+  return {
+    type: "RESET"
+  };
+};
 
 module.exports =  {
   ActionCreator: {
     startGame,
-    putStone
+    putStone,
+    skip,
+    reset
   }
 };

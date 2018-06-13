@@ -8,7 +8,7 @@ const {
   getStoneNum,
   getDiffCells
 } = require("./Reducer");
-const ActionCreator = require("./ActionCreator");
+const {ActionCreator} = require("./ActionCreator");
 
 describe("Reducer", () => {
   it("white should win", () => {
@@ -35,6 +35,60 @@ describe("Reducer", () => {
       [ 1, 1, 1, -1, 1, 1, 1, 1 ],
       [ 1, 1, 1, -1, 1, 1, 1, 1 ],
       [ 1, 1, 1, -1, 1, 1, 1, 1 ]
+    ]);
+  });
+
+  it("should reset", () => {
+    const next = Reducer({
+      gameState: "black",
+      board: [
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, -1, 1, 1, 1 ],
+        [ 1, 1, 1, -1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 0, 1, 1, 1, 1 ]
+      ]
+    }, ActionCreator.reset());
+    expect(next.gameState).toBe("init");
+    expect(next.board).toEqual([
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 1, -1, 0, 0, 0 ],
+      [ 0, 0, 0, -1, 1, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ]
+    ]);
+  });
+
+  it("should reset", () => {
+    const next = Reducer({
+      gameState: "black",
+      board: [
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, -1, 1, 1, 1 ],
+        [ 1, 1, 1, -1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+        [ 1, 1, 1, 0, 1, 1, 1, 1 ]
+      ]
+    }, ActionCreator.skip());
+    expect(next.gameState).toBe("white");
+    expect(next.board).toEqual([
+      [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+      [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+      [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+      [ 1, 1, 1, 1, -1, 1, 1, 1 ],
+      [ 1, 1, 1, -1, 1, 1, 1, 1 ],
+      [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+      [ 1, 1, 1, 1, 1, 1, 1, 1 ],
+      [ 1, 1, 1, 0, 1, 1, 1, 1 ]
     ]);
   });
 
