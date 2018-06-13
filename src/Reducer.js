@@ -1,16 +1,32 @@
+const BOARD_WIDTH = 8;
+const BOARD_HEIGHT = 8;
+const W = 1;  // white
+const B = -1; // black
+const E = 0;  // empty
+
+const STONE_WHITE = "white";
+const STONE_BLACK = "black";
+
+const STATE_INIT = "init";
+const STATE_WHITE = "white";
+const STATE_BLACK = "black";
+const STATE_WIN_WHITE = `win-${STATE_WHITE}`;
+const STATE_WIN_BLACK = `win-${STATE_BLACK}`;
+const STATE_DRAW = "draw";
+
 const initialBoardState = [
-  [0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0],
-  [0,0,0,1,-1,0,0,0],
-  [0,0,0,-1,1,0,0,0],
-  [0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0],
+  [ E, E, E, E, E, E, E, E],
+  [ E, E, E, E, E, E, E, E],
+  [ E, E, E, E, E, E, E, E],
+  [ E, E, E, W, B, E, E, E],
+  [ E, E, E, B, W, E, E, E],
+  [ E, E, E, E, E, E, E, E],
+  [ E, E, E, E, E, E, E, E],
+  [ E, E, E, E, E, E, E, E],
 ];
 
 const initialState = {
-  gameState: "init", // "init", "white", "black", "win-white", "win-black", "draw"
+  gameState: STATE_INIT, // "init", "white", "black", "win-white", "win-black", "draw"
   board: initialBoardState
 };
 
@@ -18,7 +34,7 @@ const Reducer = (state = initialState, action) => {
   switch (action.type) {
     case "START_GAME" :
       return Object.assign({}, state, {
-        gameState: "black"
+        gameState: STATE_BLACK
       });
 
     case "PUT_STONE":
@@ -26,7 +42,7 @@ const Reducer = (state = initialState, action) => {
       if (!canPlace(state.board, action.stone)) {
         // 置けなければその色の負け
         return Object.assign({}, state, {
-          gameState: `win-${action.stone.type === "black" ? "white" : "black"}`
+          gameState: `win-${action.stone.type === STATE_BLACK ? STATE_WHITE : STATE_BLACK}`
         });
       }
 
@@ -55,12 +71,12 @@ const canPlace = (board, { x, y, type }) => {
  */
 const place = (board, { x, y, type }) => {
   const next = JSON.parse(JSON.stringify(board));
-  const placed = next[y][x] = type === "white" ? 1 : -1;
+  const placed = next[y][x] = type === STONE_WHITE ? W : B;
 
   // 裏返すロジック
   // left direction
   for (let i = x-1; i >= 0; i--) {
-    if (next[y][i] === 0) {
+    if (next[y][i] === E) {
       break;
     }
     if (next[y][i] === placed) {
@@ -71,8 +87,8 @@ const place = (board, { x, y, type }) => {
     }
   }
   // right direction
-  for (let i = x+1; i < 8; i++) {
-    if (next[y][i] === 0) {
+  for (let i = x+1; i < BOARD_WIDTH; i++) {
+    if (next[y][i] === E) {
       break;
     }
     if (next[y][i] === placed) {
@@ -84,7 +100,7 @@ const place = (board, { x, y, type }) => {
   }
   // top direction
   for (let i = y-1; i >= 0; i--) {
-    if (next[i][x] === 0) {
+    if (next[i][x] === E) {
       break;
     }
     if (next[i][x] === placed) {
@@ -95,8 +111,8 @@ const place = (board, { x, y, type }) => {
     }
   }
   // bottom direction
-  for (let i = y+1; i < 8; i++) {
-    if (next[i][x] === 0) {
+  for (let i = y+1; i < BOARD_HEIGHT; i++) {
+    if (next[i][x] === E) {
       break;
     }
     if (next[i][x] === placed) {
@@ -110,8 +126,8 @@ const place = (board, { x, y, type }) => {
   // right bottom direction
   if (x <= y) {
     const sa = y-x;
-    for (let i = y+1; i < 8; i++) {
-      if (next[i][i-sa] === 0) {
+    for (let i = y+1; i < BOARD_HEIGHT; i++) {
+      if (next[i][i-sa] === E) {
         break;
       }
       if (next[i][i-sa] === placed) {
@@ -123,8 +139,8 @@ const place = (board, { x, y, type }) => {
     }
   } else {
     const sa = x-y;
-    for (let i = x+1; i < 8; i++) {
-      if (next[i-sa][i] === 0) {
+    for (let i = x+1; i < BOARD_WIDTH; i++) {
+      if (next[i-sa][i] === E) {
         break;
       }
       if (next[i-sa][i] === placed) {
@@ -136,9 +152,9 @@ const place = (board, { x, y, type }) => {
     }
   }
   // right top direction
-  if (y < 7-x) {
+  if (y < BOARD_WIDTH-1-x) {
     for (let i = y-1; i >= 0; i--) {
-      if (next[i][x+(y-i)] === 0) {
+      if (next[i][x+(y-i)] === E) {
         break;
       }
       if (next[i][x+(y-i)] === placed) {
@@ -149,8 +165,8 @@ const place = (board, { x, y, type }) => {
       }
     }
   } else {
-    for (let i = x+1; i < 8; i++) {
-      if (next[y-(i-x)][i] === 0) {
+    for (let i = x+1; i < BOARD_WIDTH; i++) {
+      if (next[y-(i-x)][i] === E) {
         break;
       }
       if (next[y-(i-x)][i] === placed) {
@@ -164,7 +180,7 @@ const place = (board, { x, y, type }) => {
   // left top direction
   if (y < x) {
     for (let i = y-1; i >= 0; i--) {
-      if (next[i][x-(y-i)] === 0) {
+      if (next[i][x-(y-i)] === E) {
         break;
       }
       if (next[i][x-(y-i)] === placed) {
@@ -176,7 +192,7 @@ const place = (board, { x, y, type }) => {
     }
   } else {
     for (let i = x-1; i >= 0; i--) {
-      if (next[y-(x-i)][i] === 0) {
+      if (next[y-(x-i)][i] === E) {
         break;
       }
       if (next[y-(x-i)][i] === placed) {
@@ -188,9 +204,9 @@ const place = (board, { x, y, type }) => {
     }
   }
   // left bottom direction
-  if (x < 7-y) {
+  if (x < BOARD_HEIGHT-1-y) {
     for (let i = x-1; i >= 0; i--) {
-      if (next[y+(x-i)][i] === 0) {
+      if (next[y+(x-i)][i] === E) {
         break;
       }
       if (next[y+(x-i)][i] === placed) {
@@ -201,8 +217,8 @@ const place = (board, { x, y, type }) => {
       }
     }
   } else {
-    for (let i = y+1; i < 8; i++) {
-      if (next[i][x-(i-y)] === 0) {
+    for (let i = y+1; i < BOARD_HEIGHT; i++) {
+      if (next[i][x-(i-y)] === E) {
         break;
       }
       if (next[i][x-(i-y)] === placed) {
@@ -238,29 +254,19 @@ const getNextGameState = (board, currentGameState) => {
     } = getStoneNum(board);
 
     if (whiteNum > blackNum) {
-      return "win-white";
+      return STATE_WIN_WHITE;
     } else if (blackNum > whiteNum) {
-      return "win-black";
+      return STATE_WIN_BLACK;
     } else {
-      return "draw";
+      return STATE_DRAW;
     }
   }
 
   // ゲーム続行
-  if (currentGameState === "white") {
-    // blackが置けるかどうか
-    if (getPlacableCells(board, "black").length > 0) {
-      return "black";
-    } else {
-      return "white";
-    }
-  } else if (currentGameState === "black") {
-    // whiteが置けるかどうか
-    if (getPlacableCells(board, "white").length > 0) {
-      return "white";
-    } else {
-      return "black";
-    }
+  if (currentGameState === STATE_WHITE) {
+    return STATE_BLACK;
+  } else if (currentGameState === STATE_BLACK) {
+    return STATE_WHITE;
   }
   return currentGameState;
 };
@@ -269,9 +275,9 @@ const getStoneNum = board => {
   let whiteNum = 0;
   let blackNum = 0;
   board.forEach(row => row.forEach(val => {
-    if (val === 1) {
+    if (val === W) {
       whiteNum++;
-    } else if (val === -1) {
+    } else if (val === B) {
       blackNum++;
     }
   }));
@@ -286,7 +292,7 @@ const getStoneNum = board => {
  * @param {*} board
  */
 const isBoardFull = board => {
-  const hasEmpty = board.some(row => row.some(val => val === 0));
+  const hasEmpty = board.some(row => row.some(val => val === E));
   return !hasEmpty;
 };
 
