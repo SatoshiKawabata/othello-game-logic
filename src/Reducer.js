@@ -14,6 +14,9 @@ const STATE_WIN_WHITE = `win-${STATE_WHITE}`;
 const STATE_WIN_BLACK = `win-${STATE_BLACK}`;
 const STATE_DRAW = "draw";
 
+// 10分のタイムリミット
+const DEFAULT_TIME_LIMIT_SECONDS = 60 * 10;
+
 const initialBoardState = [
   [ E, E, E, E, E, E, E, E],
   [ E, E, E, E, E, E, E, E],
@@ -28,23 +31,40 @@ const initialBoardState = [
 const initialState = {
   gameState: STATE_INIT, // "init", "white", "black", "win-white", "win-black", "draw"
   board: initialBoardState,
-  placeableCells: []
+  white: {
+    placeableCells: [],
+    name: "white",
+    timeLimit: DEFAULT_TIME_LIMIT_SECONDS
+  },
+  black: {
+    placeableCells: [],
+    name: "black",
+    timeLimit: DEFAULT_TIME_LIMIT_SECONDS
+  }
 };
 
 /**
  *
- * @param {{gameState: string, board: number[][], placeableCells: {x: number, y: number}[]}} state
- * @param {{type: string, stone?: {x: number, y: number, type: "white" | "black"}}} action
- * @returns {{gameState: string, board: number[][], placeableCells: {x: number, y: number}[]}}
+ * @param {{gameState: string, board: number[][], white: {name: string, placeableCells: {x: number, y: number}[]}, timeLimit: number}, black: {name: string, placeableCells: {x: number, y: number}[]}, timeLimit: number}} state
+ * @param {{type: string, stone?: {x: number, y: number, type: "white" | "black"}, playerName?: string, stoneType?: "white" | "black"}} action
+ * @returns {{gameState: string, board: number[][], placeableCells: {x: number, y: number}[], playerInfo: { white: { name: string, tineLimit: number }}}}
  */
 const Reducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case "START_GAME" :
-      return Object.assign({}, state, {
+      return {
+        ...state,
         gameState: STATE_BLACK,
         board: initialBoardState,
-        placeableCells: getPlacableCells(state.board, STONE_BLACK)
-      });
+        white: {
+          ...state.white,
+          placeableCells: getPlacableCells(initialBoardState, STONE_WHITE)
+        },
+        black: {
+          ...state.black,
+          placeableCells: getPlacableCells(initialBoardState, STONE_BLACK)
+        }
+      };
 
     case "PUT_STONE":
 
@@ -53,13 +73,19 @@ const Reducer = (state = initialState, action = {}) => {
       // 勝利判定
       const nextGameState = getNextGameState(nextBoard, state.gameState);
 
-      return Object.assign({}, state, {
+      return {
+        ...state,
         gameState: nextGameState,
         board: nextBoard,
-        placeableCells: isGame(nextGameState)
-          ? getPlacableCells(nextBoard, getStone(nextGameState))
-          : []
-      });
+        white: {
+          ...state.white,
+          placeableCells: getPlacableCells(nextBoard, STONE_WHITE)
+        },
+        black: {
+          ...state.black,
+          placeableCells: getPlacableCells(nextBoard, STONE_BLACK)
+        }
+      };
 
     case "SKIP":
       let next = state.gameState;
@@ -68,12 +94,21 @@ const Reducer = (state = initialState, action = {}) => {
       } else if (state.gameState === STATE_BLACK) {
         next = STATE_WHITE;
       }
-      return Object.assign({}, state, {
+      return {
+        ...state,
         gameState: next
-      });
+      };
 
     case "RESET":
       return initialState;
+
+    case "SET_PLAYER_NAME":
+      if (action.stoneType === STONE_WHITE) {
+        state.white.name = action.playerName;
+      } else if (action.stoneType === STONE_BLACK) {
+        state.black.name = action.playerName;
+      }
+      return state;
 
     default:
       return state;

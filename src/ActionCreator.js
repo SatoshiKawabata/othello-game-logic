@@ -39,11 +39,25 @@ const reset = () => {
   };
 };
 
+/**
+ * @param {string} playerName
+ * @param {"white" | "black"} stoneType
+ * @returns { {type: string, playerName: string, stoneType: "white" | "black"} }
+ */
+const setPlayerName = (playerName, stoneType) => {
+  return {
+    type: "SET_PLAYER_NAME",
+    playerName,
+    stoneType
+  };
+};
+
 module.exports =  {
   ActionCreator: {
     startGame,
     putStone,
     skip,
-    reset
+    reset,
+    setPlayerName
   }
 };

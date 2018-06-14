@@ -92,6 +92,24 @@ describe("Reducer", () => {
     ]);
   });
 
+  it("should set player name", () => {
+    let next = Reducer(undefined, ActionCreator.setPlayerName("test-player", "white"));
+    next = Reducer(next, ActionCreator.setPlayerName("test-player2", "black"));
+    expect(next.gameState).toBe("init");
+    expect(next.white.name).toBe("test-player");
+    expect(next.black.name).toBe("test-player2");
+    expect(next.board).toEqual([
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 1, -1, 0, 0, 0 ],
+      [ 0, 0, 0, -1, 1, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ]
+    ]);
+  });
+
   it("canPlace", () => {
     let board = [
       [ 0, 0, 0, 0, 0, 0, 0, 0 ],
