@@ -1,5 +1,5 @@
 const {Store} = require("./Store");
-const {Reducer} = require("./Reducer");
+const {Reducer} = require("./Reducers");
 const {ActionCreator} = require("./ActionCreator");
 
 describe("Store test", () => {

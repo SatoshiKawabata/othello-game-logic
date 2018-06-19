@@ -1,6 +1,6 @@
 {
   "name": "othello-game-logic",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "main": "index.js",
   "author": "SatoshiKawabata <kwst.andromeda.ma@gmail.com> (http://qiita.com/kwst)",
   "license": "MIT",

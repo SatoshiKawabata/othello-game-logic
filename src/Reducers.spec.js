@@ -7,7 +7,7 @@ const {
   isBoardFull,
   getStoneNum,
   getDiffCells
-} = require("./Reducer");
+} = require("./Reducers");
 const {ActionCreator} = require("./ActionCreator");
 
 describe("Reducer", () => {
