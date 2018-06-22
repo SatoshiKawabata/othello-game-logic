@@ -52,19 +52,16 @@ const initialState = {
 const Reducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case "START_GAME" :
-      return {
-        ...state,
+      return Object.assign({}, state, {
         gameState: STATE_BLACK,
         board: initialBoardState,
-        white: {
-          ...state.white,
+        white: Object.assign({}, state.white, {
           placeableCells: getPlacableCells(initialBoardState, STONE_WHITE)
-        },
-        black: {
-          ...state.black,
+        }),
+        black: Object.assign({}, state.black, {
           placeableCells: getPlacableCells(initialBoardState, STONE_BLACK)
-        }
-      };
+        })
+      });
 
     case "PUT_STONE":
 
@@ -73,19 +70,16 @@ const Reducer = (state = initialState, action = {}) => {
       // 勝利判定
       const nextGameState = getNextGameState(nextBoard, state.gameState);
 
-      return {
-        ...state,
+      return Object.assign({}, state, {
         gameState: nextGameState,
         board: nextBoard,
-        white: {
-          ...state.white,
-          placeableCells: getPlacableCells(nextBoard, STONE_WHITE)
-        },
-        black: {
-          ...state.black,
-          placeableCells: getPlacableCells(nextBoard, STONE_BLACK)
-        }
-      };
+        white: Object.assign({}, state.white, {
+          placeableCells: getPlacableCells(initialBoardState, STONE_WHITE)
+        }),
+        black: Object.assign({}, state.black, {
+          placeableCells: getPlacableCells(initialBoardState, STONE_BLACK)
+        })
+      });
 
     case "SKIP":
       let next = state.gameState;
@@ -94,10 +88,9 @@ const Reducer = (state = initialState, action = {}) => {
       } else if (state.gameState === STATE_BLACK) {
         next = STATE_WHITE;
       }
-      return {
-        ...state,
+      return Object.assign({}, state, {
         gameState: next
-      };
+      });
 
     case "RESET":
       return initialState;
