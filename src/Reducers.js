@@ -74,10 +74,10 @@ const Reducer = (state = initialState, action = {}) => {
         gameState: nextGameState,
         board: nextBoard,
         white: Object.assign({}, state.white, {
-          placeableCells: getPlacableCells(initialBoardState, STONE_WHITE)
+          placeableCells: getPlacableCells(nextBoard, STONE_WHITE)
         }),
         black: Object.assign({}, state.black, {
-          placeableCells: getPlacableCells(initialBoardState, STONE_BLACK)
+          placeableCells: getPlacableCells(nextBoard, STONE_BLACK)
         })
       });
 

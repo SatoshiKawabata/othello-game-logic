@@ -31,7 +31,7 @@ class Store {
   }
 
   /**
-   * @returns {{gameState: string, board: number[][], placeableCells: {x: number, y: number}[]}}
+   * @returns {{gameState: string, board: number[][], black: { placeableCells: {x: number, y: number}[], name: "black", timeLimit: number }, white: { placeableCells: {x: number, y: number}[], name: "white", timeLimit: number } }}
    */
   getState() {
     return this._state;
