@@ -11,6 +11,66 @@ const {
 const {ActionCreator} = require("./ActionCreator");
 
 describe("Reducer", () => {
+
+  it("should win black when white can't put", () => {
+    let next = Reducer({
+      gameState: "black",
+      board: [
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, -1, 1, 0, 0, 0 ],
+        [ 0, 0, 0, -1, -1, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ]
+      ]
+    }, ActionCreator.putStone(4, 2, "black"));
+    expect(next.gameState).toBe("win-black");
+
+    next = Reducer({
+      gameState: "white",
+      board: [
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, -1, 1, 0, 0, 1 ],
+        [ 0, 0, 0, 1, 1, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ]
+      ]
+    }, ActionCreator.putStone(3, 2, "white"));
+    expect(next.gameState).toBe("win-white");
+  });
+
+  it("should start game", () => {
+    const next = Reducer({
+      gameState: "black",
+      board: [
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 1, 1, 0, 0, 0 ],
+        [ 0, 0, 0, 1, 1, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+        [ 0, 0, 0, 0, 0, 0, 0, 0 ]
+      ]
+    }, ActionCreator.startGame());
+    expect(next.gameState).toBe("black");
+    expect(next.board).toEqual([
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 1, -1, 0, 0, 0 ],
+      [ 0, 0, 0, -1, 1, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+      [ 0, 0, 0, 0, 0, 0, 0, 0 ]
+    ]);
+  });
+
   it("white should win", () => {
     const next = Reducer({
       gameState: "black",

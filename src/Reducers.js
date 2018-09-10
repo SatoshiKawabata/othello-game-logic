@@ -361,9 +361,10 @@ const getDiffCells = (boardA, boardB) => {
  */
 const getNextGameState = (board, currentGameState) => {
   let next;
-  // ボードが全て埋まっているか
-  if (isBoardFull(board)) {
-    // 埋まっていれば、どっちが多いか計算
+  const cannotPlace = getPlacableCells(board, STONE_WHITE).length === 0 && getPlacableCells(board, STONE_WHITE).length === 0;
+  // ボードが全て埋まっているか or 白も黒も置けない状態か
+  if (isBoardFull(board) || cannotPlace) {
+    // どっちが多いか計算
     const {
       whiteNum,
       blackNum
